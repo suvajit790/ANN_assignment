@@ -34,14 +34,14 @@ class Network:
 
     def feedForword(self):
         for layer in range(1, len(self.topology)):
-            layer_out = self.sigmoid(np.matmul(np.array(self.layer_outs[-1]), self.weights[layer - 1]))
+            layer_out = self.sigmoid(np.matmul(np.array(self.layer_outs[layer - 1]), self.weights[layer - 1]))
             layer_out = np.copy(layer_out[0])
             if layer != (len(self.topology) - 1):
                 layer_out = np.append(layer_out[0], 1)
             self.layer_outs[layer] = layer_out
             
     def backPropagate(self, target):
-        next_layer_err = target - self.layer_outs[-1]
+        next_layer_err = target - self.layer_outs[len(self.topology) - 1]
         for index in reversed(range(len(self.topology) - 1)):
             next_layer_grad = np.multiply(next_layer_err, self.dSigmoid(self.layer_outs[index + 1]))
             prv_layer_out = self.layer_outs[index]
@@ -55,17 +55,17 @@ class Network:
             next_layer_err = next_layer_err.T
 
     def getError(self, target):
-        e = target - self.layer_outs[-1]
+        e = target - self.layer_outs[len(self.topology) - 1]
         err = np.sum(e ** 2)
         err = err / len(target)
         err = math.sqrt(err)
         return err
 
     def getResults(self):
-        results = np.copy(self.layer_outs[-1][0])
+        results = np.copy(self.layer_outs[len(self.topology) - 1][0])
         return results
     
     def getThResults(self):
-        results = np.copy(self.layer_outs[-1][0])
+        results = np.copy(self.layer_outs[len(self.topology) - 1][0])
         results = [float(int(i/np.max(results))) for i in results]
         return results
