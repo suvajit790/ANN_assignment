@@ -7,7 +7,7 @@ class Network:
 
     def __init__(self, topology):
         self.topology = topology
-        self.weights = []
+        self.weights = {}
         for index in range(len(self.topology) - 1):
             weights_mat = []
             for i in range(self.topology[index]):
@@ -19,7 +19,7 @@ class Network:
             for j in range(self.topology[index + 1]):
                 biases.append(np.random.normal())
             weights_mat.append(biases)
-            self.weights.append(np.matrix(weights_mat))
+            self.weights[index] = np.matrix(weights_mat)
     
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x * 1.0))
@@ -28,9 +28,9 @@ class Network:
         return x * (1.0 - x)
 
     def setInput(self, inputs):
-        self.layer_outs = []
+        self.layer_outs = {}
         inputs = np.append(inputs, 1)
-        self.layer_outs.append(inputs)
+        self.layer_outs[0] = inputs
 
     def feedForword(self):
         for layer in range(1, len(self.topology)):
@@ -38,7 +38,7 @@ class Network:
             layer_out = np.copy(layer_out[0])
             if layer != (len(self.topology) - 1):
                 layer_out = np.append(layer_out[0], 1)
-            self.layer_outs.append(layer_out)
+            self.layer_outs[layer] = layer_out
             
     def backPropagate(self, target):
         next_layer_err = target - self.layer_outs[-1]
